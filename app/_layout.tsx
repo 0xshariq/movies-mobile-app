@@ -13,13 +13,13 @@ export default function RootLayout() {
     />
     <Stack.Screen 
      name='(tabs)'
-     options: {{
+     options={{
       headerShown: false
      }}
     />
     <Stack.Screen 
       name="movie/[id]"
-      options: {{
+      options={{
       title: "Movie-Detail",
       headerShown: false
      }} 
