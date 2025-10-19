@@ -1,30 +1,81 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, ImageBackground, Text, View, Pressable, Alert } from "react-native";
+import { useAuth } from "../lib/useAuth"
+import { account } from "../lib/appwrite"
 
 const TabIcon = ({ focused, icon, title }: any) => {
   if (focused) {
-    <ImageBackground
-      source={images.highlight}
-      className="flex flex-row w-full flex-1 min-w-[112px] min-h-16 mt-4 justify-center items-center rounded-full overflow-hidden"
-    >
-      <Image source={icon} tintColor="#151312" className="size-5" />
-      <Text className="text-secondary text-base font-semibold ml-2">
-        {title}
-      </Text>
-    </ImageBackground>;
+    return (
+      <ImageBackground
+        source={images.highlight}
+        className="flex flex-row w-full flex-1 min-w-[112px] min-h-16 mt-4 justify-center items-center rounded-full overflow-hidden"
+      >
+        <Image source={icon} tintColor="#151312" className="size-5" />
+        <Text className="text-secondary text-base font-semibold ml-2">
+          {title}
+        </Text>
+      </ImageBackground>
+    );
   }
   return (
     <View className="size-full justify-center items-center mt-4 rounded-full">
-      <Image source={icon} tintColor='#A8B5DB' className="size-5" />
+      <Image source={icon} tintColor="#A8B5DB" className="size-5" />
     </View>
   );
 };
-const _layout = () => {
+const TabsLayout = () => {
+  const router = useRouter()
+  const { user, loading } = useAuth()
   return (
-    <Tabs
+    <View className="flex-1">
+      <View className="w-full flex-row justify-end items-center p-4">
+        {!loading && user ? (
+          <>
+            <Text className="text-sm text-white mr-4">{user.email}</Text>
+            <Pressable
+              onPress={() => {
+                Alert.alert(
+                  'Confirm logout',
+                  'Are you sure you want to logout?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Logout',
+                      style: 'destructive',
+                      onPress: async () => {
+                        try {
+                          await account.deleteSession('current')
+                          router.replace('/login')
+                        } catch (err: any) {
+                          console.error(err)
+                          Alert.alert('Logout failed', err.message || String(err))
+                        }
+                      },
+                    },
+                  ],
+                )
+              }}
+              className="bg-white px-3 py-2 rounded-md"
+            >
+              <Text className="text-sm text-black">Logout</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Pressable onPress={() => router.push('/login')} className="mr-4">
+              <Text className="text-sm text-white">Login</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push('/signup')} className="bg-white px-3 py-2 rounded-md">
+              <Text className="text-sm text-black">Sign up</Text>
+            </Pressable>
+          </>
+        )}
+      </View>
+
+      <Tabs
       screenOptions={{
         tabBarShowLabel: false,
         tabBarItemStyle: {
@@ -47,7 +98,7 @@ const _layout = () => {
       }}
     >
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
           title: "Home",
           headerShown: false,
@@ -87,7 +138,8 @@ const _layout = () => {
         }}
       />
     </Tabs>
+    </View>
   );
 };
 
-export default _layout;
+export default TabsLayout;
