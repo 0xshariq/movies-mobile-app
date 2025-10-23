@@ -3,7 +3,7 @@ import { images } from "@/constants/images";
 import { Tabs, useRouter } from "expo-router";
 import React from "react";
 import { Image, ImageBackground, Text, View, Pressable, Alert } from "react-native";
-import { useAuth } from "../lib/useAuth"
+import useAuth from "../lib/useAuth"
 import { account } from "../lib/appwrite"
 
 const TabIcon = ({ focused, icon, title }: any) => {
