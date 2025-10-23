@@ -2,9 +2,16 @@ import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { Tabs, useRouter } from "expo-router";
 import React from "react";
-import { Image, ImageBackground, Text, View, Pressable, Alert } from "react-native";
-import useAuth from "../lib/useAuth"
-import { account } from "../lib/appwrite"
+import {
+  Image,
+  ImageBackground,
+  Text,
+  View,
+  Pressable,
+  Alert,
+} from "react-native";
+import useAuth from "../lib/useAuth";
+import { account } from "../lib/appwrite";
 
 const TabIcon = ({ focused, icon, title }: any) => {
   if (focused) {
@@ -27,8 +34,8 @@ const TabIcon = ({ focused, icon, title }: any) => {
   );
 };
 const TabsLayout = () => {
-  const router = useRouter()
-  const { user, loading } = useAuth()
+  const router = useRouter();
+  const { user, loading } = useAuth();
   return (
     <View className="flex-1">
       <View className="w-full flex-row justify-end items-center p-4">
@@ -38,25 +45,28 @@ const TabsLayout = () => {
             <Pressable
               onPress={() => {
                 Alert.alert(
-                  'Confirm logout',
-                  'Are you sure you want to logout?',
+                  "Confirm logout",
+                  "Are you sure you want to logout?",
                   [
-                    { text: 'Cancel', style: 'cancel' },
+                    { text: "Cancel", style: "cancel" },
                     {
-                      text: 'Logout',
-                      style: 'destructive',
+                      text: "Logout",
+                      style: "destructive",
                       onPress: async () => {
                         try {
-                          await account.deleteSession('current')
-                          router.replace('/login')
+                          await account.deleteSession("current");
+                          router.replace("/login");
                         } catch (err: any) {
-                          console.error(err)
-                          Alert.alert('Logout failed', err.message || String(err))
+                          console.error(err);
+                          Alert.alert(
+                            "Logout failed",
+                            err.message || String(err)
+                          );
                         }
                       },
                     },
-                  ],
-                )
+                  ]
+                );
               }}
               className="bg-white px-3 py-2 rounded-md"
             >
@@ -65,10 +75,13 @@ const TabsLayout = () => {
           </>
         ) : (
           <>
-            <Pressable onPress={() => router.push('/login')} className="mr-4">
+            <Pressable onPress={() => router.push("/login")} className="mr-4">
               <Text className="text-sm text-white">Login</Text>
             </Pressable>
-            <Pressable onPress={() => router.push('/signup')} className="bg-white px-3 py-2 rounded-md">
+            <Pressable
+              onPress={() => router.push("/signup")}
+              className="bg-white px-3 py-2 rounded-md"
+            >
               <Text className="text-sm text-black">Sign up</Text>
             </Pressable>
           </>
@@ -76,68 +89,80 @@ const TabsLayout = () => {
       </View>
 
       <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarItemStyle: {
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        tabBarStyle: {
-            backgroundColor: '#0f0d23',
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarItemStyle: {
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          tabBarStyle: {
+            backgroundColor: "#0f0d23",
             borderRadius: 50,
             marginHorizontal: 20,
             marginBottom: 36,
             height: 52,
-            position: 'absolute',
-            overflow: 'hidden',
+            position: "absolute",
+            overflow: "hidden",
             borderWidth: 1,
-            borderColor: '#0f0d23'
-        }
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return <TabIcon focused={focused} icon={icons.home} title="Home" />;
+            borderColor: "#0f0d23",
           },
         }}
-      />
-      <Tabs.Screen
-        name="search"
-        options={{
-          title: "Search",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return <TabIcon focused={focused} icon={icons.search} title="Search" />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return <TabIcon focused={focused} icon={icons.person} title="Profile" />;
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="saved"
-        options={{
-          title: "Saved",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => {
-            return <TabIcon focused={focused} icon={icons.save} title="Saved" />;
-          },
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return (
+                <TabIcon focused={focused} icon={icons.home} title="Home" />
+              );
+            },
+          }}
+        />
+        <Tabs.Screen
+          name="search"
+          options={{
+            title: "Search",
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return (
+                <TabIcon focused={focused} icon={icons.search} title="Search" />
+              );
+            },
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return (
+                <TabIcon
+                  focused={focused}
+                  icon={icons.person}
+                  title="Profile"
+                />
+              );
+            },
+          }}
+        />
+        <Tabs.Screen
+          name="saved"
+          options={{
+            title: "Saved",
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return (
+                <TabIcon focused={focused} icon={icons.save} title="Saved" />
+              );
+            },
+          }}
+        />
+      </Tabs>
     </View>
   );
 };
