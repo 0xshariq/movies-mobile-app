@@ -157,3 +157,9 @@ If you'd like, I can also:
   These use the same Appwrite `account.get()` check (via `app/lib/useAuth.ts`) and redirect unauthenticated users to `/(auth)/login`.
 
   Why: Expo Router doesn't have a server-style middleware for client-side auth checks in all environments, so protecting a route using a layout wrapper is a reliable pattern that keeps redirects local to the client and preserves router behaviour.
+
+### Middleware file
+
+- I also added a simple client-side middleware component at `app/_middleware.tsx` and render it from the root layout (`app/_layout.tsx`).
+- What it does: checks the current pathname and redirects unauthenticated users from protected prefixes (`/profile`, `/saved`) to `/(auth)/login`.
+- Note: this is a client-side check and works for Expo Router in the app; for server-side redirection on web you would implement server middleware or an Appwrite-backed SSR check.

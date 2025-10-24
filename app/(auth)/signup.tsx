@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { account, databases } from "../lib/appwrite";
-import { useRouter } from "expo-router";
+import { ID } from 'appwrite'
+import * as Crypto from 'expo-crypto';
+import { Link, useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -34,7 +36,7 @@ const Signup = () => {
     setLoading(true);
     try {
       const user = await account.create(
-        "unique()",
+        ID.unique(),
         data.email,
         data.password,
         data.name
@@ -44,14 +46,20 @@ const Signup = () => {
       const usersCollection =
         process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID || "users";
       if (databaseId) {
+        const now = new Date().toISOString()
+        const hashedPassword = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, data.password)
         await databases.createDocument(
           databaseId,
           usersCollection,
-          "unique()",
+          ID.unique(),
           {
-            appwriteId: user.$id,
+            userId: user.$id,
             email: data.email,
-            name: data.name,
+            username: data.name,
+            password: hashedPassword,
+            createdAt: now,
+            updatedAt: now,
+            isActive: true,
           }
         );
       }
@@ -71,7 +79,9 @@ const Signup = () => {
   };
 
   return (
-    <View className="flex-1 p-6 justify-center bg-white">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View className="flex-1 p-6 justify-center bg-white">
       <Text className="text-2xl font-bold mb-6">Create an account</Text>
 
       <Text className="text-sm mb-2">Name</Text>
@@ -130,7 +140,10 @@ const Signup = () => {
           {loading ? "Creating..." : "Create account"}
         </Text>
       </Pressable>
-    </View>
+      <Text className="text-center">Already have an account? <Link href="/login" className="underline">Log in</Link></Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

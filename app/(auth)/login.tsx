@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable } from "react-native";
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { account } from "../lib/appwrite";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,8 +43,10 @@ const Login = () => {
   };
 
   return (
-    <View className="flex-1 p-6 justify-center bg-white">
-      <Text className="text-2xl font-bold mb-6">Login</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View className="flex-1 p-6 justify-center bg-white">
+          <Text className="text-2xl font-bold mb-6">Login</Text>
 
       <Text className="text-sm mb-2">Email</Text>
       <TextInput
@@ -88,7 +90,10 @@ const Login = () => {
           {loading ? "Logging in..." : "Login"}
         </Text>
       </Pressable>
-    </View>
+          <Text className="text-center ">Don&apos;t have an account? <Link href="/signup" className="underline">Sign up</Link></Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
