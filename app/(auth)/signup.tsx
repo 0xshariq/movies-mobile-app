@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { account, databases } from "../lib/appwrite";
-import { ID } from 'appwrite'
-import * as Crypto from 'expo-crypto';
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { account, functions } from "../lib/appwrite";
 import { Link, useRouter } from "expo-router";
+import { useAuthContext } from "../lib/AuthProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,61 +31,41 @@ const Signup = () => {
     defaultValues: { name: "", email: "", password: "" },
   });
 
+  const { refresh } = useAuthContext()
+
   const createAccount = async (data: FormData) => {
     setLoading(true);
     try {
-      const user = await account.create(
-        ID.unique(),
-        data.email,
-        data.password,
-        data.name
-      );
+      // call server-side Appwrite Function which will create the Appwrite account and the user profile document
+      const functionId = process.env.EXPO_PUBLIC_APPWRITE_CREATE_USER_FUNCTION_ID || ''
+      if (!functionId) throw new Error('Server function not configured')
 
-      const databaseId = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID || "";
-      const usersCollection =
-        process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID || "users";
-      if (databaseId) {
-        const now = new Date().toISOString()
-        const hashedPassword = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, data.password)
-        await databases.createDocument(
-          databaseId,
-          usersCollection,
-          ID.unique(),
-          {
-            userId: user.$id,
-            email: data.email,
-            username: data.name,
-            password: hashedPassword,
-            createdAt: now,
-            updatedAt: now,
-            isActive: true,
-          }
-        );
-      }
+      const payload = { email: data.email, password: data.password, username: data.name }
+      await functions.createExecution(functionId, JSON.stringify(payload))
 
-      // create session and redirect to profile
-      await account.createSession(data.email, data.password);
-      setValue("email", "");
-      setValue("password", "");
-      setValue("name", "");
-      router.replace("/profile");
+      // after server created the user, create a client session and refresh context
+      await account.createSession(data.email, data.password)
+      await refresh()
+      setValue('email', '')
+      setValue('password', '')
+      setValue('name', '')
+      router.replace('/profile')
     } catch (err: any) {
-      console.error(err);
-      Alert.alert("Error", err.message || JSON.stringify(err));
+      console.error(err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-primary">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-        <View className="flex-1 p-6 justify-center bg-white">
-      <Text className="text-2xl font-bold mb-6">Create an account</Text>
+        <View className="flex-1 p-6 justify-center bg-[rgba(255,255,255,0.03)] rounded-lg">
+      <Text className="text-2xl font-bold mb-6 text-white">Create an account</Text>
 
-      <Text className="text-sm mb-2">Name</Text>
+      <Text className="text-sm mb-2 text-white">Name</Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-3 mb-4"
+        className="border border-transparent bg-white/5 rounded-md p-3 mb-4 text-white"
         placeholder="Your name"
         value={name}
         onChangeText={(v) => {
@@ -98,9 +77,9 @@ const Signup = () => {
         <Text className="text-red-500 mb-2">{errors.name.message}</Text>
       ) : null}
 
-      <Text className="text-sm mb-2">Email</Text>
+      <Text className="text-sm mb-2 text-white">Email</Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-3 mb-4"
+        className="border border-transparent bg-white/5 rounded-md p-3 mb-4 text-white"
         placeholder="email@example.com"
         value={email}
         onChangeText={(v) => {
@@ -114,9 +93,9 @@ const Signup = () => {
         <Text className="text-red-500 mb-2">{errors.email.message}</Text>
       ) : null}
 
-      <Text className="text-sm mb-2">Password</Text>
+      <Text className="text-sm mb-2 text-white">Password</Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-3 mb-6"
+        className="border border-transparent bg-white/5 rounded-md p-3 mb-6 text-white"
         placeholder="••••••••"
         value={password}
         onChangeText={(v) => {
@@ -131,7 +110,7 @@ const Signup = () => {
 
       <Pressable
         className={`py-3 rounded-md items-center ${
-          loading ? "bg-gray-400" : "bg-blue-600"
+          loading ? "bg-gray-400" : "bg-violet-600"
         }`}
         onPress={handleSubmit(createAccount)}
         disabled={loading}

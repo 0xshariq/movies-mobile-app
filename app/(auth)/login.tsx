@@ -5,6 +5,7 @@ import { Link, useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthContext } from "../lib/AuthProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { refresh } = useAuthContext()
 
   const schema = z.object({
     email: z.string().email("Invalid email"),
@@ -33,6 +35,8 @@ const Login = () => {
     setLoading(true);
     try {
       await account.createSession(data.email, data.password);
+      // refresh AuthContext so pages re-render and profile is loaded
+      try { await refresh() } catch {}
       router.replace("/profile");
     } catch (err: any) {
       console.error(err);
@@ -43,14 +47,14 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-white">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1 bg-primary">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-        <View className="flex-1 p-6 justify-center bg-white">
-          <Text className="text-2xl font-bold mb-6">Login</Text>
+        <View className="flex-1 p-6 justify-center bg-[rgba(255,255,255,0.03)] rounded-lg">
+          <Text className="text-2xl font-bold mb-6 text-white">Login</Text>
 
-      <Text className="text-sm mb-2">Email</Text>
+      <Text className="text-sm mb-2 text-white">Email</Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-3 mb-4"
+        className="border border-transparent bg-white/5 rounded-md p-3 mb-4 text-white"
         placeholder="email@example.com"
         value={email}
         onChangeText={(v) => {
@@ -65,7 +69,7 @@ const Login = () => {
       ) : null}
       <Text className="text-sm mb-2">Password</Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-3 mb-6"
+        className="border border-transparent bg-white/5 rounded-md p-3 mb-6 text-white"
         placeholder="••••••"
         value={password}
         onChangeText={(v) => {

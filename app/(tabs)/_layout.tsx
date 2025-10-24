@@ -8,10 +8,9 @@ import {
   Text,
   View,
   Pressable,
-  Alert,
 } from "react-native";
 import useAuth from "../lib/useAuth";
-import { account } from "../lib/appwrite";
+import { useToast } from "../lib/ToastProvider";
 
 const TabIcon = ({ focused, icon, title }: any) => {
   if (focused) {
@@ -35,7 +34,8 @@ const TabIcon = ({ focused, icon, title }: any) => {
 };
 const TabsLayout = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth()
+  const { show } = useToast()
   return (
     <View className="flex-1">
       <View className="w-full flex-row justify-end items-center p-4">
@@ -43,30 +43,15 @@ const TabsLayout = () => {
           <>
             <Text className="text-sm text-white mr-4">{user.email}</Text>
             <Pressable
-              onPress={() => {
-                Alert.alert(
-                  "Confirm logout",
-                  "Are you sure you want to logout?",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    {
-                      text: "Logout",
-                      style: "destructive",
-                      onPress: async () => {
-                        try {
-                          await account.deleteSession("current");
-                          router.replace("/login");
-                        } catch (err: any) {
-                          console.error(err);
-                          Alert.alert(
-                            "Logout failed",
-                            err.message || String(err)
-                          );
-                        }
-                      },
-                    },
-                  ]
-                );
+              onPress={async () => {
+                try {
+                  await logout?.()
+                  show('Logged out')
+                  router.replace('/login')
+                } catch (err: any) {
+                  console.error(err)
+                  show('Logout failed')
+                }
               }}
               className="bg-white px-3 py-2 rounded-md"
             >

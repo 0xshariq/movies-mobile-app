@@ -11,7 +11,7 @@ export default function Middleware() {
     const check = async () => {
       // only protect certain routes
       if (!pathname) return
-      const protectedPrefixes = ['/profile', '/saved']
+  const protectedPrefixes = ['/profile', '/saved', '/search']
       const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
       if (!isProtected) return
 

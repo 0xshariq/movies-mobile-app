@@ -1,27 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useAuthContext } from './AuthProvider'
 import { account } from './appwrite'
 
 export default function useAuth() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    let mounted = true
-    const fetchUser = async () => {
-      try {
-        const res = await account.get()
-        if (mounted) setUser(res)
-      } catch {
-        if (mounted) setUser(null)
-      } finally {
-        if (mounted) setLoading(false)
-      }
-    }
-    fetchUser()
-    return () => { mounted = false }
-  }, [])
-
-  return { user, loading }
+  // helper hook kept for compatibility
+  try {
+    const ctx = useAuthContext()
+    return { user: ctx.user?.account ?? null, profile: ctx.user?.profile ?? null, loading: ctx.loading, refresh: ctx.refresh, logout: ctx.logout }
+  } catch {
+    // fallback if AuthProvider isn't mounted
+    return { user: null, profile: null, loading: true }
+  }
 }
 
 export async function getCurrentUser() {
