@@ -9,6 +9,14 @@ module.exports = {
         primary: '#030014',
         secondary: '#151312',
         accent: '#AB8BFF',
+        tab: {
+          bg: '#0f0d23',
+          border: '#2b163d'
+        },
+        ui: {
+          primary: '#EDE7FF',
+          secondary: '#C7BEE6'
+        },
         light: {
           100: '#D6C6FF',
           200: '#A8B5DB',
