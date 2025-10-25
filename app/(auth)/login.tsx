@@ -94,7 +94,7 @@ const Login = () => {
           {loading ? "Logging in..." : "Login"}
         </Text>
       </Pressable>
-          <Text className="text-center ">Don&apos;t have an account? <Link href="/signup" className="underline">Sign up</Link></Text>
+          <Text className="text-center text-white mt-4">Don&apos;t have an account? <Link href="/signup" className="underline">Sign up</Link></Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

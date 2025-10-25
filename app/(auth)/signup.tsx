@@ -119,7 +119,7 @@ const Signup = () => {
           {loading ? "Creating..." : "Create account"}
         </Text>
       </Pressable>
-      <Text className="text-center">Already have an account? <Link href="/login" className="underline">Log in</Link></Text>
+      <Text className="text-center text-white mt-4">Already have an account? <Link href="/login" className="underline">Log in</Link></Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
