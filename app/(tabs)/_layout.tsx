@@ -1,16 +1,8 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
-import useAuth from "../lib/useAuth";
-import { useToast } from "../lib/ToastProvider";
+import { Image, ImageBackground, Text, View } from "react-native";
 
 const TabIcon = ({ focused, icon, title }: any) => {
   if (focused) {
@@ -33,46 +25,8 @@ const TabIcon = ({ focused, icon, title }: any) => {
   );
 };
 const TabsLayout = () => {
-  const router = useRouter();
-  const { user, loading, logout } = useAuth()
-  const { show } = useToast()
   return (
     <View className="flex-1">
-      <View className="w-full flex-row justify-end items-center p-4">
-        {!loading && user ? (
-          <>
-            <Text className="text-sm text-white mr-4">{user.email}</Text>
-            <Pressable
-              onPress={async () => {
-                try {
-                  await logout?.()
-                  show('Logged out')
-                  router.replace('/login')
-                } catch (err: any) {
-                  console.error(err)
-                  show('Logout failed')
-                }
-              }}
-              className="bg-white px-3 py-2 rounded-md"
-            >
-              <Text className="text-sm text-black">Logout</Text>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <Pressable onPress={() => router.push("/login")} className="mr-4">
-              <Text className="text-sm text-white">Login</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => router.push("/signup")}
-              className="bg-white px-3 py-2 rounded-md"
-            >
-              <Text className="text-sm text-black">Sign up</Text>
-            </Pressable>
-          </>
-        )}
-      </View>
-
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
