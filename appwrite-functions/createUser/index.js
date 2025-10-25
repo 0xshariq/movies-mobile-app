@@ -7,6 +7,7 @@
 
 import { Client, Account, Databases, ID as _ID } from 'node-appwrite'
 import { hash } from 'bcryptjs'
+import crypto from 'crypto'
 
 function readEventData() {
   try {
@@ -53,13 +54,39 @@ function readEventData() {
   const ID = _ID
 
   try {
+    // create a safe userId: prefer the SDK's ID.unique(), but validate it and
+    // fall back to a generated id that meets Appwrite requirements if needed.
+    const rawId = (typeof ID?.unique === 'function') ? ID.unique() : ''
+
+    const isValidUserId = (id) => {
+      if (!id || typeof id !== 'string') return false
+      // must start with alnum and be at most 36 chars; allowed chars: a-zA-Z0-9._-
+      return /^[A-Za-z0-9][A-Za-z0-9_.-]{0,35}$/.test(id)
+    }
+
+    const generateFallbackId = () => {
+      // generate a random id that starts with an alpha char and uses hex (0-9a-f)
+      // keep length <= 36
+      const hex = crypto.randomBytes(17).toString('hex') // 34 chars
+      return `u${hex}` // starts with letter, total length 35
+    }
+
+    const safeId = isValidUserId(rawId) ? rawId : generateFallbackId()
+
+    // debug: log when we had to fallback to a generated id. Safe to log
+    // because this does not expose credentials. This helps detect SDK/id issues.
+    if (safeId !== rawId) {
+      console.log(JSON.stringify({ event: 'fallback_userid_used', rawId, safeId }))
+    }
+
     // create Appwrite auth user
-    const user = await account.create(ID.unique(), email, password, username || undefined)
+    const user = await account.create(safeId, email, password, username || undefined)
 
     // optionally store a bcrypt hashed password (only if explicitly enabled)
     let hashedPassword = null
+    const salt = 20
     if (String(process.env.APPWRITE_STORE_PASSWORD_HASH || '').toLowerCase() === '1') {
-      hashedPassword = await hash(password, 10)
+      hashedPassword = await hash(password, salt)
     }
 
     const databaseId = process.env.APPWRITE_DATABASE_ID
