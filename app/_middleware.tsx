@@ -11,9 +11,10 @@ export default function Middleware() {
     const check = async () => {
       // only protect certain routes
       if (!pathname) return
+  // protect only specific private routes (do NOT protect the root '/').
   const protectedPrefixes = ['/profile', '/saved', '/search']
-      const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
-      if (!isProtected) return
+  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
+  if (!isProtected) return
 
       try {
         const user = await getCurrentUser()
