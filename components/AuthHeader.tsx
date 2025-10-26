@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
-import useAuth from "@/app/lib/useAuth";
-import { useToast } from "@/app/lib/ToastProvider";
+import useAuth from "@/lib/useAuth";
+import { useToast } from "@/lib/ToastProvider";
 import { theme } from "@/constants/theme";
 
 export default function AuthHeader() {
