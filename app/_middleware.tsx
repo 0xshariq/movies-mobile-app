@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'expo-router'
-import { getCurrentUser } from './lib/useAuth'
+import { getCurrentUser } from '@/lib/useAuth'
 
 export default function Middleware() {
   const router = useRouter()
