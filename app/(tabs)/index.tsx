@@ -1,8 +1,8 @@
 import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { fetchMovies } from "@/services/api";
-import useFetch from "@/services/useFetch";
+import { fetchMovies } from "@/lib/api";
+import useFetch from "@/lib/useFetch";
 import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -14,8 +14,6 @@ import {
 } from "react-native";
 import AuthHeader from "@/components/AuthHeader";
 import MovieCard from "@/components/MovieCard";
-
-// AuthHeader component moved to components/AuthHeader.tsx
 
 export default function Index() {
   const router = useRouter();

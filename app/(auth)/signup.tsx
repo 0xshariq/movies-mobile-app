@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { account, functions } from "../lib/appwrite";
+import { account, functions } from "@/lib/appwrite";
 import { Link, useRouter } from "expo-router";
-import { useAuthContext } from "../lib/AuthProvider";
+import { useAuthContext } from "@/lib/AuthProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";

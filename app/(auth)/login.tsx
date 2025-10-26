@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import { account } from "../lib/appwrite";
+import { account } from "@/lib/appwrite";
 import { Link, useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthContext } from "../lib/AuthProvider";
+import { useAuthContext } from "@/lib/AuthProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
-import useAuth from "../../lib/useAuth";
+import useAuth from "@/lib/useAuth";
 
 export default function SavedLayout({ children }: any) {
   const { user, loading } = useAuth();
