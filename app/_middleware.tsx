@@ -12,7 +12,8 @@ export default function Middleware() {
       // only protect certain routes
       if (!pathname) return
   // protect only specific private routes (do NOT protect the root '/').
-  const protectedPrefixes = ['/profile', '/saved', '/search']
+  // const protectedPrefixes = ['/profile', '/saved', '/search']
+  const protectedPrefixes = ['/l']
   const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
   if (!isProtected) return
 
