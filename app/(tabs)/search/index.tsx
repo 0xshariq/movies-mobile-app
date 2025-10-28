@@ -9,7 +9,6 @@ import SearchBar from "@/components/SearchBar";
 import { updateSearchCount } from "@/lib/movie";
 
 const search = () => {
-
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -21,7 +20,6 @@ const search = () => {
   } = useFetch<any[]>(() => fetchMovies({ query: searchQuery }), false);
 
   useEffect(() => {
-    updateSearchCount(searchQuery, movies?.[0]);
     const refetchMovies = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
@@ -31,6 +29,12 @@ const search = () => {
     }, 500);
     return () => clearTimeout(refetchMovies);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if ((movies?.length ?? 0) > 0 && movies?.[0])
+      updateSearchCount(searchQuery, movies?.[0]);
+  }, [movies]);
+
   return (
     <View className="flex-1 bg-primary">
       <Image
@@ -89,7 +93,7 @@ const search = () => {
           !moviesLoading && !moviesError ? (
             <View className="mt-10 px-5">
               <Text className="text-center text-gray-500">
-                {searchQuery.trim() ? 'No Movies Found' : 'Search for a movie'}
+                {searchQuery.trim() ? "No Movies Found" : "Search for a movie"}
               </Text>
             </View>
           ) : null
