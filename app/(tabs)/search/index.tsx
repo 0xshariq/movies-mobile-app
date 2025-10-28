@@ -18,12 +18,10 @@ const search = () => {
     error: moviesError,
     refetch: loadMovies,
     reset,
-  } = useFetch(() => {
-    fetchMovies({ query: searchQuery });
-  }, false);
+  } = useFetch<any[]>(() => fetchMovies({ query: searchQuery }), false);
 
   useEffect(() => {
-    updateSearchCount(searchQuery, movies[0]);
+    updateSearchCount(searchQuery, movies?.[0]);
     const refetchMovies = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
@@ -33,7 +31,6 @@ const search = () => {
     }, 500);
     return () => clearTimeout(refetchMovies);
   }, [searchQuery]);
-
   return (
     <View className="flex-1 bg-primary">
       <Image
@@ -43,9 +40,7 @@ const search = () => {
       />
       <FlatList
         data={movies}
-        renderItem={({ item }) => {
-          <MovieCard {...item} />;
-        }}
+        renderItem={({ item }) => <MovieCard {...item} />}
         keyExtractor={(item) => item.id.toString()}
         className="px-5"
         numColumns={3}
@@ -82,7 +77,7 @@ const search = () => {
             {!moviesLoading &&
               !moviesError &&
               searchQuery.trim() &&
-              movies?.length > 0 && (
+              (movies?.length ?? 0) > 0 && (
                 <Text className="text-xl text-white font-bold text-center">
                   Search Results for{" "}
                   <Text className="text-accent">{searchQuery}</Text>
@@ -94,10 +89,10 @@ const search = () => {
           !moviesLoading && !moviesError ? (
             <View className="mt-10 px-5">
               <Text className="text-center text-gray-500">
-                {searchQuery.trim() ? 'No Movies Found': 'Search for a movie'}
+                {searchQuery.trim() ? 'No Movies Found' : 'Search for a movie'}
               </Text>
             </View>
-          )
+          ) : null
         }
       />
     </View>
