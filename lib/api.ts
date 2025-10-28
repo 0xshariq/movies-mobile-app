@@ -25,3 +25,19 @@ export const fetchMovies = async ({ query }: { query: string }) => {
     const data = response.data;
     return data.results;
 }
+
+export const fetchMovieDetails = async (movieId: string): Promise<MovieDetails> => {
+    try {
+        const response = await axios.get(`${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}&language=en-US`, {
+            headers: TMDB_CONFIG.headers,
+        })
+        if (response.status < 200 || response.status >= 300) {
+            throw new Error('Failed to Fetch Movie Details')
+        }
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
