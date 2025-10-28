@@ -1,35 +1,37 @@
-import { useEffect } from 'react'
-import { useRouter, usePathname } from 'expo-router'
-import { getCurrentUser } from '@/lib/useAuth'
+import { useEffect } from "react";
+import { useRouter, usePathname } from "expo-router";
+import { getCurrentUser } from "@/lib/useAuth";
 
 export default function Middleware() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
     const check = async () => {
       // only protect certain routes
-      if (!pathname) return
-  // protect only specific private routes (do NOT protect the root '/').
-  // const protectedPrefixes = ['/profile', '/saved', '/search']
-  const protectedPrefixes = ['/l']
-  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p))
-  if (!isProtected) return
+      if (!pathname) return;
+      // protect only specific private routes (do NOT protect the root '/').
+      // const protectedPrefixes = ['/profile', '/saved', '/search']
+      const protectedPrefixes = ["/l"];
+      const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
+      if (!isProtected) return;
 
       try {
-        const user = await getCurrentUser()
+        const user = await getCurrentUser();
         if (mounted && !user) {
           // redirect to auth login
-          router.replace('/login')
+          router.replace("/login");
         }
       } catch {
-        if (mounted) router.replace('/login')
+        if (mounted) router.replace("/login");
       }
-    }
-    check()
-    return () => { mounted = false }
-  }, [pathname, router])
+    };
+    check();
+    return () => {
+      mounted = false;
+    };
+  }, [pathname, router]);
 
-  return null
+  return null;
 }
