@@ -22,9 +22,7 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const MovieDetails = () => {
   const { id } = useLocalSearchParams();
   const {
-    data: movie,
-    loading,
-    error,
+    data: movie
   } = useFetch(() => fetchMovieDetails(id as string));
 
   return (
@@ -43,9 +41,6 @@ const MovieDetails = () => {
           <Text className="text-white font-bold text-xl">{movie?.title}</Text>
           <Text className="text-white font-bold text-xl">
             {movie?.original_title}
-          </Text>
-          <Text className="text-white font-bold text-xl">
-            {movie?.original_language}
           </Text>
           <View className="flex-row items-center gap-x-1 mt-2">
             <Text className="text-light-200 text-sm">
@@ -70,11 +65,15 @@ const MovieDetails = () => {
           <View className="flex flex-row justify-between w-1/2">
             <MovieInfo
               label="Budget"
-              value={`$${movie?.budget / 1_000_000} million`}
+              value={
+                movie?.budget != null
+                  ? `$${(movie.budget / 1_000_000).toFixed(1)} million`
+                  : "N/A"
+              }
             />
             <MovieInfo
               label="Revenue"
-              value={`$${Math.round(movie?.revenue) / 1_000_000} million`}
+              value={`$${Math.round(movie?.revenue ?? 0) / 1_000_000} million`}
             />
             <MovieInfo label="isAdult" value={movie?.adult} />
           </View>

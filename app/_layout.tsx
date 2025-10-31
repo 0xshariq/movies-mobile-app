@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import "./globals.css";
-import Middleware from "./_middleware";
 import { AuthProvider } from "@/lib/AuthProvider";
 import { ToastProvider } from "@/lib/ToastProvider";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -11,7 +10,6 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AuthProvider>
         <ToastProvider>
-          <Middleware />
           <StatusBar hidden={true} />
           <Stack>
             <Stack.Screen
