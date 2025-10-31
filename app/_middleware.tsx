@@ -1,37 +1,4 @@
-import { useEffect } from "react";
-import { useRouter, usePathname } from "expo-router";
-import { getCurrentUser } from "@/lib/useAuth";
-
+// Middleware intentionally left as a no-op so routes are freely accessible.
 export default function Middleware() {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    let mounted = true;
-    const check = async () => {
-      // only protect certain routes
-      if (!pathname) return;
-      // protect only specific private routes (do NOT protect the root '/').
-      // const protectedPrefixes = ['/profile', '/saved', '/search']
-      const protectedPrefixes = ["/l"];
-      const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
-      if (!isProtected) return;
-
-      try {
-        const user = await getCurrentUser();
-        if (mounted && !user) {
-          // redirect to auth login
-          router.replace("/login");
-        }
-      } catch {
-        if (mounted) router.replace("/login");
-      }
-    };
-    check();
-    return () => {
-      mounted = false;
-    };
-  }, [pathname, router]);
-
   return null;
 }
